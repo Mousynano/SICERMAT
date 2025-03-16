@@ -15,7 +15,7 @@ const char jump_html[] PROGMEM = R"rawliteral(
    <script src="https://bernii.github.io/gauge.js/dist/gauge.min.js"></script>
    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.2.0/chartjs-plugin-zoom.min.js"></script>
-   <link rel=" stylesheet" href="/styles.css">
+   <link rel=" stylesheet" href="../CSS/style.css">
 </head>
 
 <body>
@@ -37,7 +37,7 @@ const char jump_html[] PROGMEM = R"rawliteral(
                   <div class="card-body">
                      <h5 class="card-title text-white">Jump Count</h5>
                      <p id="jumpCount" class="card-text">0</p>
-                     <img src="/icon/jump.svg" alt="boxingicon" class="w-[150px] mt-[25px]" />
+                     <img src="../icon/jump.svg" alt="boxingicon" class="w-[150px] mt-[25px]" />
                   </div>
                </div>
             </div>
@@ -95,7 +95,8 @@ const char jump_html[] PROGMEM = R"rawliteral(
    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
    <script src="https://code.jscharting.com/latest/jscharting.js"></script>
    <script type="text/javascript" src="https://code.jscharting.com/latest/modules/types.js"></script>
-   <script src="/JS/jump.js"></script>
+   <!-- <script src="../JS/websocket.js"></script> -->
+   <!-- <script type="module" src="../JS/features/jump.js"></script> -->
 </body>
 
 </html>

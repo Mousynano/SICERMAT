@@ -13,7 +13,7 @@ const char index_html[] PROGMEM = R"rawliteral(
    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
    <script src="https://bernii.github.io/gauge.js/dist/gauge.min.js"></script>
-   <link rel="stylesheet" href="/style.css">
+   <link rel="stylesheet" href="./CSS/style.css">
 </head>
 
 <body>
@@ -37,7 +37,7 @@ const char index_html[] PROGMEM = R"rawliteral(
 
 
 
-   <iframe id="contentFrame" src="/HTML/punch.html" frameborder="0"
+   <iframe id="contentFrame" src="./HTML/punch.html" frameborder="0"
       class="h-[150vh] overflow-x-hidden w-full"></iframe>
 
 
@@ -80,9 +80,10 @@ const char index_html[] PROGMEM = R"rawliteral(
    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
    <script src="https://code.jscharting.com/latest/jscharting.js"></script>
    <script type="text/javascript" src="https://code.jscharting.com/latest/modules/types.js"></script>
-
-
-   <script src="/main.js"></script>
+   <script type="module" src="./JS/features/heart.js"></script>
+   <!-- <script type="module" src="./JS/websocket.js"></script> -->
+   <script type="module" src="./JS/script.js"></script>
+   <!-- <script type="module" src="./JS/websocket.js"></script> -->
 </body>
 
 </html>

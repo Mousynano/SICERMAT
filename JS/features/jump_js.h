@@ -2,22 +2,15 @@
 #define JUMP_JS_H
 
 const char jump_js[] PROGMEM = R"rawliteral(
-//1) VARIABLES//
-var jumpCount = 0
-var maxHeight = 0;
-var timeElapsedJump = 0
-var allJumpData = [];
-var fetchJump = false
-
-
-
-
-
-
-
+//1) letIABLES//
+let jumpCount = 0
+let maxHeight = 0;
+let timeElapsedJump = 0
+let allJumpData = [];
+let fetchJump = false
 
 //2) GAUGES//
-var jumpGauge = JSC.chart('jumpHeightGauge', {
+let jumpGauge = JSC.chart('jumpHeightGauge', {
    debug: true,
    box: {
       fill: 'transparent'
@@ -62,16 +55,6 @@ var jumpGauge = JSC.chart('jumpHeightGauge', {
       }
    ]
 });
-
-
-
-
-
-
-
-
-
-
 
 //3) CHARTS//
 const ctx_height = document.getElementById('heightChart').getContext('2d');
@@ -135,63 +118,43 @@ document.getElementById("export-jump").addEventListener("click", function () {
    URL.revokeObjectURL(url);
 });
 
-
-
-
-
-
-
-
-
-
-
-
 //4) FETCH DATA//
-var fetchDataJump = () => {
-   if (fetchJump) {
+export const updateData = (data) => {
+   const { jumpHeight } = data
+   jumpCount++
 
-      jumpCount++
-      jumpHeight = Math.floor(Math.random() * 10) + 1;
+   allJumpData.push({ time: `Time ${timeElapsedJump + 1}`, height: jumpHeight });
 
-      allJumpData.push({ time: `Time ${timeElapsedJump + 1}`, height: jumpHeight });
+   $('#jumpCount').text(`${jumpCount}`);
+   $('#jumpHeight').text(`${jumpHeight}m`);
+   $('#jumpCm').text(`${jumpHeight * 10} cm`);
+   maxHeight = Math.max(maxHeight, jumpHeight);
+   $('#maxHeight').text(`${maxHeight} m`);
 
-      $('#jumpCount').text(`${jumpCount}`);
-      $('#jumpHeight').text(`${jumpHeight}m`);
-      $('#jumpCm').text(`${jumpHeight * 10} cm`);
-      maxHeight = Math.max(maxHeight, jumpHeight);
-      $('#maxHeight').text(`${maxHeight} m`);
+   jumpGauge.options({
+      series: [{
+         points: [['score', [1, jumpHeight]]],
+      }]
+   })
 
-      jumpGauge.options({
-         series: [{
-            points: [['score', [1, jumpHeight]]],
-         }]
-      })
-
-      timeElapsedJump++;
-      if (timeElapsedJump > 10) {
-         jumpChart.data.labels.shift();
-         jumpChart.data.datasets.forEach(dataset => {
-            dataset.data.shift();
-         });
-      }
-
-      jumpChart.data.labels.push(`Time ${timeElapsedJump}`);
-      jumpChart.data.datasets[0].data.push(jumpHeight);
-      jumpChart.update();
+   timeElapsedJump++;
+   if (timeElapsedJump > 10) {
+      jumpChart.data.labels.shift();
+      jumpChart.data.datasets.forEach(dataset => {
+         dataset.data.shift();
+      });
    }
+
+   jumpChart.data.labels.push(`Time ${timeElapsedJump}`);
+   jumpChart.data.datasets[0].data.push(jumpHeight);
+   jumpChart.update();
 }
 
-
-
-
-
-
-
-
+export const verifier = ['jumpHeight']
 
 //5) START AND RESET BUTTONS//
-var strJump = document.getElementById('str-jump')
-var rstJump = document.getElementById('rst-jump')
+let strJump = document.getElementById('str-jump')
+let rstJump = document.getElementById('rst-jump')
 strJump.addEventListener('click', () => startExercise())
 rstJump.addEventListener('click', () => resetExercise())
 
@@ -222,11 +185,6 @@ function resetExercise() {
    jumpChart.update();
    strJump.textContent = "Start"
 }
-
-
-
-
-setInterval(fetchDataJump, 1000);
 )rawliteral";
 
 #endif

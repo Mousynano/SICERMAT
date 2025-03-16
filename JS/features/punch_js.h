@@ -10,11 +10,6 @@ var timeElapsedPunch = 0
 var allPunchData = [];
 var fetchPunch = false
 
-
-
-
-
-
 //2) GAUGES//
 const punchPowerGauge = new Gauge(document.getElementById('punchPowerGauge')).setOptions({
    angle: 0.1,
@@ -42,7 +37,7 @@ punchPowerGauge.maxValue = 100;
 punchPowerGauge.setMinValue(0);
 punchPowerGauge.set(0);
 
-const retractionPowerGauge = new Gauge(document.getElementById('retractionPowerGauge')).setOptions({
+const retractionTimeGauge = new Gauge(document.getElementById('retractionTimeGauge')).setOptions({
    angle: 0.1,
    lineWidth: 0.44,
    radiusScale: 0.6,
@@ -64,16 +59,9 @@ const retractionPowerGauge = new Gauge(document.getElementById('retractionPowerG
    strokeColor: '#E0E0E0',
    generateGradient: true
 });
-retractionPowerGauge.maxValue = 100;
-retractionPowerGauge.setMinValue(0);
-retractionPowerGauge.set(0);
-
-
-
-
-
-
-
+retractionTimeGauge.maxValue = 100;
+retractionTimeGauge.setMinValue(0);
+retractionTimeGauge.set(0);
 
 //3) CHART//
 const ctx = document.getElementById('powerChart').getContext('2d');
@@ -129,7 +117,7 @@ const powerChart = new Chart(ctx, {
 document.getElementById("export-punch").addEventListener("click", function () {
    let csvContent = "Time,Punch Power,Retraction Power\n";
    allPunchData.forEach(entry => {
-      csvContent += `${entry.time},${entry.punchPower},${entry.retractionPower}\n`;
+      csvContent += `${entry.time},${entry.punchPower},${entry.retractionTime}\n`;
    });
    const blob = new Blob([csvContent], { type: "text/csv" });
    const url = URL.createObjectURL(blob);
@@ -142,65 +130,45 @@ document.getElementById("export-punch").addEventListener("click", function () {
    URL.revokeObjectURL(url);
 });
 
-
-
-
-
-
-
-
-
 //4) FETCH DATA//
-const fetchDataPunch = () => {
-   if (fetchPunch) {
+export const updateData = (data) => {
+   const {punchPower, retractionTime} = data;
+   punchCount++
 
-      punchCount++
-      punchPower = Math.floor(Math.random() * 100) + 1
-      retractionPower = Math.floor(Math.random() * 100) + 1
+   allPunchData.push({
+      time: `Time ${timeElapsedPunch + 1}`,
+      punchPower: punchPower,
+      retractionTime: retractionTime
+   });
 
-      allPunchData.push({
-         time: `Time ${timeElapsedPunch + 1}`,
-         punchPower: punchPower,
-         retractionPower: retractionPower
+   $('#punchCount').text(punchCount);
+   $('#punchPower').text(punchPower);
+   $('#retractionTime').text(retractionTime);
+   punchPowerGauge.set(punchPower);
+   retractionTimeGauge.set(retractionTime);
+   maxPower = Math.max(maxPower, punchPower);
+   $('#maxPower').text(maxPower);
+
+   punchPowers.push(punchPower);
+   const avgPower = punchPowers.reduce((sum, power) => sum + power, 0) / punchPowers.length;
+   $('#avgPower').text(avgPower.toFixed(2));
+
+
+   timeElapsedPunch++;
+   if (timeElapsedPunch > 10) {
+      powerChart.data.labels.shift();
+      powerChart.data.datasets.forEach(dataset => {
+         dataset.data.shift();
       });
-
-      $('#punchCount').text(punchCount);
-      $('#punchPower').text(punchPower);
-      $('#retractionPower').text(retractionPower);
-      punchPowerGauge.set(punchPower);
-      retractionPowerGauge.set(retractionPower);
-      maxPower = Math.max(maxPower, punchPower);
-      $('#maxPower').text(maxPower);
-
-      punchPowers.push(punchPower);
-      const avgPower = punchPowers.reduce((sum, power) => sum + power, 0) / punchPowers.length;
-      $('#avgPower').text(avgPower.toFixed(2));
-
-
-      timeElapsedPunch++;
-      if (timeElapsedPunch > 10) {
-         powerChart.data.labels.shift();
-         powerChart.data.datasets.forEach(dataset => {
-            dataset.data.shift();
-         });
-      }
-
-      powerChart.data.labels.push(`Time ${timeElapsedPunch}`);
-      powerChart.data.datasets[0].data.push(punchPower);
-      powerChart.data.datasets[1].data.push(retractionPower);
-      powerChart.update();
    }
+
+   powerChart.data.labels.push(`Time ${timeElapsedPunch}`);
+   powerChart.data.datasets[0].data.push(punchPower);
+   powerChart.data.datasets[1].data.push(retractionTime);
+   powerChart.update();
 }
 
-
-
-
-
-
-
-
-
-
+export const verifier = ['punchPower', 'retractionTime']
 
 //6) START AND RESET BUTTONS//
 var strPunch = document.getElementById('str-punch')
@@ -221,12 +189,12 @@ function resetExercise() {
 
    $('#punchCount').text('0');
    $('#punchPower').text('0');
-   $('#retractionPower').text('0');
+   $('#retractionTime').text('0');
    $('#avgPower').text('0');
    $('#maxPower').text('0');
 
    punchPowerGauge.set(0);
-   retractionPowerGauge.set(0);
+   retractionTimeGauge.set(0);
    powerChart.data.labels = [];
    powerChart.data.datasets.forEach(dataset => {
       dataset.data = [];
@@ -235,9 +203,9 @@ function resetExercise() {
    strPunch.textContent = "Start"
 }
 
+resetExercise()
 
-
-setInterval(fetchDataPunch, 1000);
+// setInterval(() => {updateData({punchPower: Math.floor(Math.random() * 100), retractionTime: Math.floor(Math.random() * 100)})}, 1000)
 )rawliteral";
 
 #endif

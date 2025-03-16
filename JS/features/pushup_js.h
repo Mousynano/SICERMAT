@@ -12,9 +12,6 @@ var isRunning = false;
 var time = 0;
 var fetchPushup = false
 
-
-
-
 //2) GAUGES//
 var pushupGauge = new Gauge(document.getElementById('pushupGauge')).setOptions({
    angle: -0.5,
@@ -35,11 +32,6 @@ var pushupGauge = new Gauge(document.getElementById('pushupGauge')).setOptions({
 pushupGauge.maxValue = 100;
 pushupGauge.setMinValue(0);
 pushupGauge.set(0);
-
-
-
-
-
 
 //3) CHARTS//
 const ctx_pushup = document.getElementById('pushupChart').getContext('2d');
@@ -102,15 +94,6 @@ document.getElementById("export-pushup").addEventListener("click", function () {
    URL.revokeObjectURL(url);
 });
 
-
-
-
-
-
-
-
-
-
 //4) TIMER FUNCTIONALITY//
 let timerElement = document.getElementById("timer");
 let timerInterval;
@@ -142,50 +125,39 @@ function resetTime() {
    updateTimer();
 }
 
-
-
-
 //5) FETCHING DATA //
-var fetchDataPushup = () => {
-   if (fetchPushup) {
-      let pushUpOneSec = Math.floor(Math.random() * 3) + 1;
-      pushUpCount += pushUpOneSec
-      pushUpSet += pushUpOneSec
+export const updateData = (data) => {
+   let pushUpOneSec = Math.floor(Math.random() * 3) + 1;
+   pushUpCount += pushUpOneSec
+   pushUpSet += pushUpOneSec
 
-      $('#pushupCount').text(`${pushUpCount}`);
+   $('#pushupCount').text(`${pushUpCount}`);
 
-      timeElapsedPushup++;
-      if (timeElapsedPushup > 30) {
-         pushupChart.data.labels.shift();
-         pushupChart.data.datasets.forEach(dataset => {
-            dataset.data.shift();
-         });
-      }
+   timeElapsedPushup++;
+   if (timeElapsedPushup > 30) {
+      pushupChart.data.labels.shift();
+      pushupChart.data.datasets.forEach(dataset => {
+         dataset.data.shift();
+      });
+   }
 
-      if (timeElapsedPushup % 3 === 0) {
-         pushupGauge.set(pushUpSet);
-         $('#pushupSpeed').text(`${pushUpSet}`);
+   if (timeElapsedPushup % 3 === 0) {
+      pushupGauge.set(pushUpSet);
+      $('#pushupSpeed').text(`${pushUpSet}`);
 
-         maxPushup = Math.max(maxPushup, pushUpSet);
-         $('#maxPushup').text(`${maxPushup}`);
+      maxPushup = Math.max(maxPushup, pushUpSet);
+      $('#maxPushup').text(`${maxPushup}`);
 
-         pushupChart.data.labels.push(`${timeElapsedPushup} Sec`);
-         pushupChart.data.datasets[0].data.push(pushUpSet);
-         pushupChart.update();
+      pushupChart.data.labels.push(`${timeElapsedPushup} Sec`);
+      pushupChart.data.datasets[0].data.push(pushUpSet);
+      pushupChart.update();
 
-         allPushupData.push({ time: `Time ${timeElapsedPushup}`, speed: pushUpSet });
-         pushUpSet = 0
-      }
-
+      allPushupData.push({ time: `Time ${timeElapsedPushup}`, speed: pushUpSet });
+      pushUpSet = 0
    }
 }
 
-
-
-
-
-
-
+export const verifier = []
 
 //6) START AND RESET BUTTONS//
 var strPushup = document.getElementById('str-pushup')
@@ -236,8 +208,6 @@ function resetExercise() {
    resetTime()
 
 }
-
-setInterval(fetchDataPushup, 1000);
 )rawliteral";
 
 #endif
