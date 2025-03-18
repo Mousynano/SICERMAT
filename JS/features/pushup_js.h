@@ -107,57 +107,41 @@ function updateTimer() {
    timerElement.textContent = formatTime(time);
 }
 
-function startPauseTime() {
-   if (isRunning) {
-      clearInterval(timerInterval);
-   } else {
-      timerInterval = setInterval(() => {
-         time++;
-         updateTimer();
-      }, 1000);
-   }
-   isRunning = !isRunning;
-}
-function resetTime() {
-   clearInterval(timerInterval);
-   time = 0;
-   isRunning = false;
-   updateTimer();
-}
 
 //5) FETCHING DATA //
-export const updateData = (data) => {
-   let pushUpOneSec = Math.floor(Math.random() * 3) + 1;
-   pushUpCount += pushUpOneSec
-   pushUpSet += pushUpOneSec
+export const updateData = () => {
+   if (fetchPushup) {
+      let pushUpOneSec = Math.floor(Math.random() * 3) + 1;
+      pushUpCount += pushUpOneSec
+      pushUpSet += pushUpOneSec
 
-   $('#pushupCount').text(`${pushUpCount}`);
+      $('#pushupCount').text(`${pushUpCount}`);
 
-   timeElapsedPushup++;
-   if (timeElapsedPushup > 30) {
-      pushupChart.data.labels.shift();
-      pushupChart.data.datasets.forEach(dataset => {
-         dataset.data.shift();
-      });
-   }
+      timeElapsedPushup++;
+      if (timeElapsedPushup > 30) {
+         pushupChart.data.labels.shift();
+         pushupChart.data.datasets.forEach(dataset => {
+            dataset.data.shift();
+         });
+      }
 
-   if (timeElapsedPushup % 3 === 0) {
-      pushupGauge.set(pushUpSet);
-      $('#pushupSpeed').text(`${pushUpSet}`);
+      if (timeElapsedPushup % 3 === 0) {
+         pushupGauge.set(pushUpSet);
+         $('#pushupSpeed').text(`${pushUpSet}`);
 
-      maxPushup = Math.max(maxPushup, pushUpSet);
-      $('#maxPushup').text(`${maxPushup}`);
+         maxPushup = Math.max(maxPushup, pushUpSet);
+         $('#maxPushup').text(`${maxPushup}`);
 
-      pushupChart.data.labels.push(`${timeElapsedPushup} Sec`);
-      pushupChart.data.datasets[0].data.push(pushUpSet);
-      pushupChart.update();
+         pushupChart.data.labels.push(`${timeElapsedPushup} Sec`);
+         pushupChart.data.datasets[0].data.push(pushUpSet);
+         pushupChart.update();
 
-      allPushupData.push({ time: `Time ${timeElapsedPushup}`, speed: pushUpSet });
-      pushUpSet = 0
+         allPushupData.push({ time: `Time ${timeElapsedPushup}`, speed: pushUpSet });
+         pushUpSet = 0
+      }
+
    }
 }
-
-export const verifier = []
 
 //6) START AND RESET BUTTONS//
 var strPushup = document.getElementById('str-pushup')

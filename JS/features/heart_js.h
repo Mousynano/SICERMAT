@@ -49,13 +49,14 @@ spo2Gauge.set(0);
 
 
 // UPDATE DATA
-export const updateDataHeart = (data) => {
+export const updateData = (data) => {
    const {heartRate, spo} = data;
    heartRateGauge.set(heartRate);
    spo2Gauge.set(spo);
 
    $('#heartRateText').text(`${heartRate} BPM`);
    $('#spo2Text').text(`${spo}%`);
-})rawliteral";
+}
+)rawliteral";
 
 #endif

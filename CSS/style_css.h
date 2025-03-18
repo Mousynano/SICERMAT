@@ -249,6 +249,11 @@ body {
    text-shadow: 2px 2px 10px white;
 }
 
+#_jsc_container0 {
+   display: none;
+
+}
+
 @media screen and (max-width:500px) {
    body {
       max-width: 100vw;
@@ -339,6 +344,14 @@ body {
 
    #control-section div {
       transform: scale(0.8);
+   }
+
+   #punchPowerGauge,
+   #retractionTimeGauge {
+      max-width: 230px;
+      max-height: 100px;
+      min-width: 230px;
+      max-height: 100px;
    }
 
 }

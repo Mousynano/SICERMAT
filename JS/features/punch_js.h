@@ -142,8 +142,8 @@ export const updateData = (data) => {
    });
 
    $('#punchCount').text(punchCount);
-   $('#punchPower').text(punchPower);
-   $('#retractionTime').text(retractionTime);
+   $('#punchPower').text(`${punchPower.toFixed(2)} N`);
+   $('#retractionTime').text(`${retractionTime} ms`);
    punchPowerGauge.set(punchPower);
    retractionTimeGauge.set(retractionTime);
    maxPower = Math.max(maxPower, punchPower);
@@ -167,8 +167,6 @@ export const updateData = (data) => {
    powerChart.data.datasets[1].data.push(retractionTime);
    powerChart.update();
 }
-
-export const verifier = ['punchPower', 'retractionTime']
 
 //6) START AND RESET BUTTONS//
 var strPunch = document.getElementById('str-punch')
@@ -204,6 +202,9 @@ function resetExercise() {
 }
 
 resetExercise()
+import {client} from "../websocket.js"
+client.addHandler("punch", updateData);
+client.connect();
 
 // setInterval(() => {updateData({punchPower: Math.floor(Math.random() * 100), retractionTime: Math.floor(Math.random() * 100)})}, 1000)
 )rawliteral";

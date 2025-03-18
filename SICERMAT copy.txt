@@ -1,7 +1,5 @@
 #include <Wire.h>
 #include <WiFi.h>
-#include <unordered_map>
-#include <ESPmDNS.h>
 
 #include "lib/http.h"
 #include "lib/websocket.h"
@@ -14,7 +12,17 @@
 // Constants
 #define WIFI_SSID "test"
 #define WIFI_PASSWORD "12345678"
-#define ESP_HOSTNAME "sicermat"
+
+// Global Variables
+// AsyncEventSource events("/events");
+
+// int punchCount = 0;
+// float maxPunchPower = 0;
+// float avgPunchPower = 0;
+// float totalPunchPower = 0;
+// float lastRetractionTime = 0;
+// float avgRetractionTime = 0;
+// float totalRetractionTime = 0;
 
 float jumpHeight = 0;
 
@@ -40,6 +48,29 @@ void terminateWithError(const String& errorMessage) {
   };
 }
 
+
+// void sendSensorData() {
+//   StaticJsonDocument<200> acc;
+//   acc["type"] = "accelerometer";
+//   acc["accX"] = accX;
+//   acc["accY"] = accY;
+//   acc["accZ"] = accZ;
+
+//   String accJson;
+//   serializeJson(acc, accJson);
+//   events.send(accJson.c_str(), "sensorData", millis());
+
+//   StaticJsonDocument<200> gyro;
+//   gyro["type"] = "gyroscope";
+//   gyro["gyroX"] = gyroX * M_PI / 180.0;
+//   gyro["gyroY"] = gyroY * M_PI / 180.0;
+//   gyro["gyroZ"] = gyroZ * M_PI / 180.0;
+
+//   String gyroJson;
+//   serializeJson(gyro, gyroJson);
+//   events.send(gyroJson.c_str(), "sensorData", millis());
+// }
+
 void connectToWiFi() {
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   while (WiFi.status() != WL_CONNECTED) {
@@ -59,24 +90,23 @@ void setup() {
   connectToWiFi();
 
   // Inisialisasi mDNS
-  if (!MDNS.begin(ESP_HOSTNAME)) {
+  if (!MDNS.begin(hostname)) {
       Serial.println("Error setting up mDNS!");
   } else {
-      Serial.printf("mDNS responder started: http://%s.local\n", ESP_HOSTNAME);
+      Serial.printf("mDNS responder started: http://%s.local\n", hostname);
   }
   
   registerRoutes(server);
 
   ws.onEvent(onWebSocketEvent);
-  server.addHandler(&ws);
+  server.addHandler(&events);
   server.begin();
 
   // Initialize Sensors
   sensorInit(mpu);
 
   // Calibrate Sensors
-  calibrateIMU(mpu);
-  calibrateHeartSensor(particleSensor);
+  calibrateSensors(mpu);
 
   // xTaskCreatePinnedToCore(sendDataTask, "SendDataTask", 4096, NULL, 1, NULL, 0);
   // xTaskCreatePinnedToCore(resetQueueTask, "ResetQueueTask", 2048, NULL, 1, NULL, 1);
@@ -86,44 +116,55 @@ void setup() {
 }
 
 void loop() {
-  // Check WiFi connection (Core 1)
+  // Check WiFi connection
   if (WiFi.status() != WL_CONNECTED) {
     connectToWiFi();
   }
 
-  // Read sensor data (Core 2)
+  // Read sensor data
   sensorSignals(mpu, accX, accY, accZ, gyroX, gyroY, gyroZ, true);
-  heartCalculation(particleSensor, heartRate, spo2);
 
-  // Create current reading (Core 2)
+  // Create current reading
   SensorReading currentReading = {accX, accY, accZ, gyroX, gyroY, gyroZ};
 
-  // Check sensor health (Core 2)
+  // Check sensor health
   if (!isSensorHealthy(currentReading, previousReading)) {
     repeatCount++;
   } else {
     repeatCount = 0;
   }
 
-  //Core 2
   if (repeatCount >= MAX_REPEATED_READINGS) {
     terminateWithError("Data sensornya ngestuck, coba cek wiring sama wiringnya dulu!");
   }
 
-  //Core 2
   previousReading = currentReading;
 
-  // Get sport analysis(Core 2)
+  // Get sport analysis
   PunchMetrics punchMetrics = analyzePunch(accX, accY, accZ);
   if (punchMetrics.valid){
-    String punchData = getPunchMetrics(punchMetrics.punchPower, punchMetrics.retractionTime);
-    String heartData = getHeartMetrics(heartRate, spo2);
-    for (auto& entry : clients) {
-      ClientData& clientData = entry.second;
-      sendJsonToClient(clientData, entry.first, punchData, "punch");
-      sendJsonToClient(clientData, entry.first, heartData, "heart");
-    }
+    String punchData = getPunchMetrics(punchPower, retractionTime);
   }
+
+  // JumpMetrics jumpMetrics = analyzeJump(accX, accY, accZ);
+  // if (jumpMetrics.valid){
+  //   String jumpData = getJumpMetrics(jumpHeight);
+  // }
+
+  // PushUpMetrics pushUpMetrics = analyzePushUp(accX, accY, accZ);
+  // if (pushUpMetrics.valid){
+  //   String pushUpData = getPushUpMetrics();
+  // }
+
+  for (auto& entry : clients) {
+    ClientData& clientData = entry.second;
+    sendJsonToClient(clientData, entry.first, punchData, "punch");
+  //   sendJsonToClient(clientData, entry.first, jumpData, "jump");
+  //   sendJsonToClient(clientData, entry.first, pushUpData, "pushUp");
+  }
+
+  // Send sensor data via WebSocket
+  // sendSensorData();
 
   // Maintain loop timing
   while (millis() - LoopTimer < 100);

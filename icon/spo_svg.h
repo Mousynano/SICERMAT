@@ -1,8 +1,7 @@
 #ifndef SPO_SVG_H
 #define SPO_SVG_H
 
-const char spo_svg[] PROGMEM = R"rawliteral(
-<?xml version="1.0" encoding="UTF-8"?>
+const char spo_svg[] PROGMEM = R"rawliteral(<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="312px" height="353px" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g><path style="opacity:1" fill="#25cefc" d="M 235.5,54.5 C 232.5,54.1667 231.167,55.5 231.5,58.5C 218.089,66.2742 205.922,64.6075 195,53.5C 186.527,39.1634 188.693,26.33 201.5,15C 217.52,7.44384 230.353,10.9438 240,25.5C 244.474,36.2624 242.974,45.929 235.5,54.5 Z"/></g>
@@ -43,6 +42,7 @@ const char spo_svg[] PROGMEM = R"rawliteral(
 <g><path style="opacity:0.537" fill="#c5eff8" d="M 57.5,315.5 C 59.0269,315.427 60.0269,316.094 60.5,317.5C 58.9731,317.573 57.9731,316.906 57.5,315.5 Z"/></g>
 <g><path style="opacity:0.427" fill="#b9eaf6" d="M 62.5,319.5 C 64.0269,319.427 65.0269,320.094 65.5,321.5C 63.9731,321.573 62.9731,320.906 62.5,319.5 Z"/></g>
 </svg>
+
 )rawliteral";
 
 #endif

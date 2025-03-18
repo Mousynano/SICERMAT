@@ -2,8 +2,7 @@
 #define SCRIPT_JS_H
 
 const char script_js[] PROGMEM = R"rawliteral(
-import { updateDataHeart } from "./features/heart.js";
-import { client, registerListener } from "./websocket.js";
+import { client } from "./websocket.js";
 
 //NAV BURGER//
 const hamburger = document.getElementById('hamburger')
@@ -40,18 +39,25 @@ async function loadFeature(feature) {
       if (featureScripts[feature]) {
          try {
             const module = await import(featureScripts[feature]).then(module => console.log(JSON.stringify(module))); 
-            const { verifier, fetchData } = module;
+            const { updateData } = module;
 
-            if (typeof fetchData === "function") {
-               currentFeature = feature; 
-               currentFetchData = fetchData; 
+            // if (typeof fetchData === "function") {
+            //    currentFeature = feature; 
+            //    currentFetchData = fetchData; 
 
-               // client.on(feature, fetchData); 
-               registerListener(feature, verifier, fetchData);
-               console.log(`Loaded script for ${feature}`);
-            } else {
-               console.error(`fetchData function not found in ${featureScripts[feature]}`);
-            }
+            //    client.registerType(feature);
+            //    client.on(feature, fetchData); 
+            //    console.log(`Loaded script for ${feature}`);
+            // } else {
+            //    console.error(`fetchData function not found in ${featureScripts[feature]}`);
+            // }
+            // client.registerType(feature);
+            // client.on(feature, fetchData);
+
+            // client.addHandler("punch", updateData);
+            // client.connect();
+            // client.addHandler(feature, updateData);
+            
          } catch (error) {
             console.error(`Failed to load script for ${feature}.js`, error);
          }
@@ -60,9 +66,6 @@ async function loadFeature(feature) {
       console.error(`Failed to load ${feature}.html`, error);
    }
 }
-
-loadFeature("punch");
-registerListener("heart", ["heartRate", "spo"], updateDataHeart);
 
 // BUTTON EVENT LISTENERS
 punchNav.addEventListener('click', function (e) {

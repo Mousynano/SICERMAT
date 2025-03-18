@@ -150,8 +150,6 @@ export const updateData = (data) => {
    jumpChart.update();
 }
 
-export const verifier = ['jumpHeight']
-
 //5) START AND RESET BUTTONS//
 let strJump = document.getElementById('str-jump')
 let rstJump = document.getElementById('rst-jump')
