@@ -75,8 +75,7 @@ void setup() {
   sensorInit(mpu);
 
   // Calibrate Sensors
-  calibrateIMU(mpu);
-  calibrateHeartSensor(particleSensor);
+  calibrateSensors(mpu);
 
   // xTaskCreatePinnedToCore(sendDataTask, "SendDataTask", 4096, NULL, 1, NULL, 0);
   // xTaskCreatePinnedToCore(resetQueueTask, "ResetQueueTask", 2048, NULL, 1, NULL, 1);
@@ -93,7 +92,6 @@ void loop() {
 
   // Read sensor data (Core 2)
   sensorSignals(mpu, accX, accY, accZ, gyroX, gyroY, gyroZ, true);
-  heartCalculation(particleSensor, heartRate, spo2);
 
   // Create current reading (Core 2)
   SensorReading currentReading = {accX, accY, accZ, gyroX, gyroY, gyroZ};
@@ -117,11 +115,9 @@ void loop() {
   PunchMetrics punchMetrics = analyzePunch(accX, accY, accZ);
   if (punchMetrics.valid){
     String punchData = getPunchMetrics(punchMetrics.punchPower, punchMetrics.retractionTime);
-    String heartData = getHeartMetrics(heartRate, spo2);
     for (auto& entry : clients) {
       ClientData& clientData = entry.second;
       sendJsonToClient(clientData, entry.first, punchData, "punch");
-      sendJsonToClient(clientData, entry.first, heartData, "heart");
     }
   }
 
